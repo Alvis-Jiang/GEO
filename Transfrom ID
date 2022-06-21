@@ -1,0 +1,9 @@
+## Download the annotation package
+library(hugene10sttranscriptcluster.db)
+ids = toTable(hugene10sttranscriptclusterSYMBOL)
+view(ids)
+length(unique(ids$symbol))
+table(sort(table(ids$symbol)))
+
+## Change ID
+rownames(exprSet)%in% ids$probe_id
