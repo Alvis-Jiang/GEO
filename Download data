@@ -1,0 +1,8 @@
+## Using R package "GEOquery" to download data
+library(GEOquery)
+gset <- getGEO('GSE42872', destdir=".", AnnotGPL = F, getGPL = F)
+experSet = expers(gset[[1]])
+pdata = pData(gset[[1]])
+write.csv(experSet, paste0("_experSet.csv"))
+write.csv(pdata, paste0("_metadata.csv"))
+return(gset)
