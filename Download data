@@ -1,8 +1,14 @@
 ## Using R package "GEOquery" to download data
 library(GEOquery)
 gset <- getGEO('GSE42872', destdir=".", AnnotGPL = F, getGPL = F)
-experSet = expers(gset[[1]])
+exprSet = expers(gset[[1]])
 pdata = pData(gset[[1]])
-write.csv(experSet, paste0("_experSet.csv"))
+write.csv(exprSet, paste0("_experSet.csv"))
 write.csv(pdata, paste0("_metadata.csv"))
-return(gset)
+return(exprSet)
+
+## Download Series Matrix file(s) from NCBI i.e GSE42872_series_matrix.txt.gz
+exprSet = read.table('GSE42872_series_matrix.txt.gz',sep='\t',comment.char='!',header = T) 
+# set the first column as row name and delete the first column
+rownames(exprSet)=gset[,1] 
+View(exprSet)
