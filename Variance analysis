@@ -1,0 +1,64 @@
+## Make bosplot to review the distribution of data
+# prepare required data 
+library(reshape2)
+a = colnames(experSet)
+exprSet1 = cbind(a, exprSet)
+m_exprSet = melt(exprSet1)
+colnames(m_exprSet) = c("symbol", "sample", "value")
+# create group_list based on known group information
+group_list=c(rep('control',3),rep('case',3))
+m_exprSet$group=rep(group_list,each=nrow(exprSet))
+p = ggplot(m_exprSet, aes(x = sample, y = value, fill = group))+genom_boxplot()
+print(p)
+
+## Clustering analysis
+# define nodPar
+nodePar <- list(lab.cex = 0.6, pch = c(NA, 19),
+                cex = 0.7, col = "blue")
+# clustering
+hc=hclust(dist(t(exprSet)))
+par(mar=c(5,5,5,10))
+plot(as.dendrogram(hc), nodePar = nodePar, horiz = TRUE)
+
+## PCA 
+df = as.data.frame(t(exprSet))
+df$group = group_list
+autoplot(prcomp( df[,1:(ncol(df)-1)] ), data=df,colour = 'group
+
+## Heatmap plot
+# preparing expression matrix, group matrix and contrast matrix
+#  group matrix:
+library(limma)
+design=model.matrix(~0+factor(group_list))
+colnames(design)=levels(factor(group_list))
+rownames(design)=colnames(exprSet)
+#  contrast matrix:
+contrast.matrix=makeContrasts(case-control,levels = design)
+fit=lmFit(exprSet,design)
+fit2 <- contrasts.fit(fit, contrast.matrix)
+fit2 <- eBayes(fit2)
+tempOutput = topTable(fit2, coef=1, n=Inf)
+nrDEG = na.omit(tempOutput) 
+write.csv(nrDEG,"limma_notrend.results.csv",quote = F)
+choose_gene=head(rownames(nrDEG))
+choose_matrix=exprSet[choose_gene,]
+choose_matrix=t(scale(t(choose_matrix)))
+pheatmap::pheatmap(choose_matrix)
+
+
+## Volcano plot 
+# define the threshold of log2FoldChange
+logFC_cutoff <- with(nrDEG,mean(abs( logFC)) + 2*sd(abs( logFC)) )
+nrDEG$change = as.factor(ifelse(nrDEG$P.Value < 0.05 & abs(nrDEG$logFC) > logFC_cutoff,
+                              ifelse(nrDEG$logFC > logFC_cutoff ,'UP','DOWN'),'NOT')
+this_tile <- paste0('Cutoff for logFC is ',round(logFC_cutoff,3),
+                    '\nThe number of up gene is ',nrow(nrDEG[nrDEG$change =='UP',]) ,
+                    '\nThe number of down gene is ',nrow(nrDEG[nrDEG$change =='DOWN',])
+g = ggplot(data=DEG, aes(x=log2FoldChange,y=-log10(pvalue),color=change))+
+  geom_point(alpha=0.4,size=1.75)+
+  theme_set(theme_set(theme_bw(base_size = 20)))+
+  xlab('log2 fold change')+ylab('-log10 p-value')+
+  ggtitle(this_title)+theme(plot.title = element_text(size = 15,hjust = 0.5))+
+  scale_color_manual(values = c('blue','black','red'))
+ggsave(g,filename = 'volcano.png') 
+print(g)
