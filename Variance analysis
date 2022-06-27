@@ -23,7 +23,7 @@ plot(as.dendrogram(hc), nodePar = nodePar, horiz = TRUE)
 ## PCA 
 df = as.data.frame(t(exprSet))
 df$group = group_list
-autoplot(prcomp( df[,1:(ncol(df)-1)] ), data=df,colour = 'group
+autoplot(prcomp( df[,1:(ncol(df)-1)] ), data=df,colour = 'group）
 
 ## Heatmap plot
 # preparing expression matrix, group matrix and contrast matrix
@@ -62,3 +62,6 @@ g = ggplot(data=DEG, aes(x=log2FoldChange,y=-log10(pvalue),color=change))+
   scale_color_manual(values = c('blue','black','red'))
 ggsave(g,filename = 'volcano.png') 
 print(g)
+
+
+
