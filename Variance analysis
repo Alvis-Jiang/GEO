@@ -1,5 +1,5 @@
-## Make bosplot to review the distribution of data
-# prepare required data 
+## Make boxplot to review the distribution of data
+# prepare the required data 
 library(reshape2)
 a = colnames(experSet)
 exprSet1 = cbind(a, exprSet)
@@ -23,7 +23,7 @@ plot(as.dendrogram(hc), nodePar = nodePar, horiz = TRUE)
 ## PCA 
 df = as.data.frame(t(exprSet))
 df$group = group_list
-autoplot(prcomp( df[,1:(ncol(df)-1)] ), data=df,colour = 'group）
+autoplot(prcomp( df[,1:(ncol(df)-1)] ), data=df, colour = 'group）
 
 ## Heatmap plot
 # preparing expression matrix, group matrix and contrast matrix
@@ -47,6 +47,7 @@ pheatmap::pheatmap(choose_matrix)
 
 
 ## Volcano plot 
+library(ggplot2)
 # define the threshold of log2FoldChange
 logFC_cutoff <- with(nrDEG,mean(abs( logFC)) + 2*sd(abs( logFC)) )
 nrDEG$change = as.factor(ifelse(nrDEG$P.Value < 0.05 & abs(nrDEG$logFC) > logFC_cutoff,
