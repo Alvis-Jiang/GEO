@@ -5,6 +5,6 @@ gene=head(rownames(nrDEG)）
 gene.df <- bitr(gene, fromType = "SYMBOL", toType = c("ENSEMBL","ENTREZID"), OrgDb = org.Hs.eg.db)
 
 ## Analysis
-K1  <- enrichKEGG(gene         = gene.df$ENTREZID,
-                 organism     = 'hsa',
+K1  <- enrichKEGG(gene = gene.df$ENTREZID,
+                 organism = 'hsa',
                  pvalueCutoff = 0.05)
