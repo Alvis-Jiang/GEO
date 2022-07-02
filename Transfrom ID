@@ -1,6 +1,7 @@
 ## Download the annotation package
 # "hugene10sttranscriptcluster" is found in the NCBI, and remember to add ".db" 
 library(hugene10sttranscriptcluster.db)
+ls(hugene10sttranscriptcluster.db)
 ids = toTable(hugene10sttranscriptclusterSYMBOL)
 view(ids)
 # count the number of genes with different probes
@@ -12,9 +13,10 @@ rownames(exprSet)%in% ids$probe_id
 table(rownames(exprSet)%in% ids$probe_id) 
 # filter the exprSet, keeping probes which have corrosponding genes in ids
 n_exprSet=exprSet[(rownames(exprSet)%in% ids$probe_id),]
-# beacuse there are some probes corrosponding to the same genes, we filter the exprSet matrix and keep the probes whith the max mean expression level.
+# beacuse there are some probes corrosponding to the same genes, we filter the exprSet matrix 
+  and keep the probes whith the max mean expression level.
 # "n_exprSet,ids$symbol" : group the n_exprSet by ids$symbol
-#  "function(x) rownames(x)[which.max(rowMeans(x))]" : find the probe with the max mean expression levels
+# "function(x) rownames(x)[which.max(rowMeans(x))]" : find the probe with the max mean expression levels
 tmp = by(n_exprSet,ids$symbol,  
          function(x) 
            rownames(x)[which.max(rowMeans(x))] )
